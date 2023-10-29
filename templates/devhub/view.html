@@ -43,6 +43,10 @@
             <textarea name="content" class="form-control" aria-label="With textarea">{{work['content']}}</textarea>
         </div>
         <br>
-        <button type="submit" class="btn btn-primary">supmit changes</button>
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="submit" class="btn btn-success">submit changes</button>
+            <a href="/view?id={{work['id']}}&d=Y" class="btn btn-danger">delete blog</a>
+        </div>
+        
     </form>
 {% endblock content %}

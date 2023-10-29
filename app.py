@@ -90,7 +90,14 @@ def admin():
 def view():
     if 'logged_in' in session and session['premisions'] == 'admin':
         id = request.args.get('id')
-
+        d = request.args.get('d')
+        if d:
+            db = get_db()
+            cursor = db.cursor()
+            cursor.execute(f"DELETE FROM `work` WHERE id ={id}")
+            db.commit()
+            cursor.close()
+            return redirect(url_for('admin'))
         new_username = request.args.get('username')
         if new_username:
             new_status = request.args.get('status')
