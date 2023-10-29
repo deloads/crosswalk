@@ -126,5 +126,28 @@ def view():
         return render_template('devhub/view.html',title=f"view {work['user']}",log=session,work=work,users=users)
     return redirect(url_for('login'))
 
+@app.route('/add')
+def add():
+    if 'logged_in' in session and session['premisions'] == 'admin':
+        name = request.args.get('username')
+        if name:
+            titel = request.args.get('titel')
+            text = request.args.get('content')
+            db = get_db()
+            cursor = db.cursor()
+            cursor.execute(f"INSERT INTO `work`(`user`, `titel`, `content`, `status`) VALUES ('{name}','{titel}','{text}','not started')")
+            db.commit()
+            cursor.close()
+            return redirect(url_for('admin'))
+        
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT `username` FROM `users`")
+        users = cursor.fetchall()
+        cursor.close()
+        
+        return render_template('devhub/add.html',title='add',log=session,users=users)
+    return redirect(url_for('login'))
+
 if __name__ == '__main__':
     app.run(debug=True)

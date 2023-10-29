@@ -2,6 +2,14 @@
 {% block content %}
     <script src="static/admin.js"></script>
     <br>
+    <div class="btn-group" role="group" aria-label="Basic example">
+        <a href="/add" class="btn btn-secondary" role="button" aria-disabled="true">add blog</a>
+    {% for user in users %}
+        <input type="checkbox" class="btn-check" id="{{user['username']}}" autocomplete="on">
+        <label class="btn btn-secondary" for="{{user['username']}}">{{user['username']}}</label>
+    {% endfor %}
+    </div>
+    <br><br>
     <div class="list-group">
     {% for item in work %}
         {% if item['status'] == 'done' %}
