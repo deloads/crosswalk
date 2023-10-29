@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, g, session
 import mysql.connector
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 app.secret_key = 'your_secret_key_here'
 
@@ -58,6 +58,7 @@ def login():
         if password == data[0]['password']:
             session['logged_in'] = True
             session['premisions'] = data[0]['premisions']
+            session['username'] = username
             return redirect(url_for('dev'))
     return render_template('mainhub/login.html',title='login',log=session)
 
@@ -65,20 +66,58 @@ def login():
 @app.route('/dev')
 def dev():
     if 'logged_in' in session and session['logged_in']:
-        return render_template('devhub/index.html',title='home',log=session)
+
+        return render_template('devhub/index.html',title='dev space',log=session)
+    return redirect(url_for('login'))
+@app.route('/admin',methods=['GET','POST'])
+def admin():
+    if 'logged_in' in session and session['premisions'] == 'admin':
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT `username` FROM `users`")
+        users = cursor.fetchall()
+        cursor.close()
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM `work`")
+        work = cursor.fetchall()
+        cursor.close()
+        
+        return render_template('devhub/admin.html',title='admin',log=session,users=users,work=work)
     return redirect(url_for('login'))
 
+@app.route('/view',methods=['GET'])
+def view():
+    if 'logged_in' in session and session['premisions'] == 'admin':
+        id = request.args.get('id')
 
-#@app.route('/add', methods=['POST'])
-#def add_data():
-#    if request.method == 'POST':
-#        data = request.form['data_to_add']
-#        db = get_db()
-#        cursor = db.cursor()
-#        cursor.execute('INSERT INTO your_table_name (column_name) VALUES (%s)', (data,))
-#        db.commit()
-#        cursor.close()
-#        return redirect(url_for('index'))
+        new_username = request.args.get('username')
+        if new_username:
+            new_status = request.args.get('status')
+            new_titel = request.args.get('titel')
+            new_content = request.args.get('content')
+
+            db = get_db()
+            cursor = db.cursor()
+            cursor.execute(f"UPDATE `work` SET `user`='{new_username}',`titel`='{new_titel}',`content`='{new_content}',`status`='{new_status}' WHERE id = {id}")
+            db.commit()
+            cursor.close()
+            return redirect(url_for('admin'))
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(f"SELECT * FROM `work` WHERE id = {id}")
+        work = cursor.fetchall()
+        cursor.close()
+        work = work[0]
+
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT `username` FROM `users`")
+        users = cursor.fetchall()
+        cursor.close()
+        
+        return render_template('devhub/view.html',title=f"view {work['user']}",log=session,work=work,users=users)
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(debug=True)
