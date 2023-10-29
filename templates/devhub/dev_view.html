@@ -1,0 +1,27 @@
+{% extends "main_layout.html" %}
+{% block content %}
+<br>
+<form action="/dev" method="get">
+    <input name="id" hidden value="{{blogs['id']}}" type="number">
+    <div class="input-group mb-3">
+        <label class="input-group-text" for="inputGroupSelect01">status</label>
+        <select required name="status" class="form-select" id="inputGroupSelect01">
+            {% if blogs['status'] == 'done' %}
+            <option value="not started">not started</option>
+            <option value="started">started</option>
+            <option selected value="done">done</option>
+            {% elif blogs['status'] == 'started' %}
+            <option value="not started">not started</option>
+            <option selected value="started">started</option>
+            <option value="done">done</option>
+            {% else %}
+            <option selected value="not started">not started</option>
+            <option value="started">started</option>
+            <option value="done">done</option>
+            {% endif %}
+            
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">submit status</button>
+</form>
+{% endblock content %}

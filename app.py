@@ -81,9 +81,36 @@ def login():
 @app.route('/dev')
 def dev():
     if 'logged_in' in session and session['logged_in']:
-
-        return render_template('devhub/index.html',title='dev space',log=session)
+        status = request.args.get('status')
+        id = request.args.get('id')
+        if status:
+            db = get_db()
+            cursor = db.cursor()
+            cursor.execute(f"UPDATE `work` SET `status`='{status}' WHERE id ={id}")
+            db.commit()
+            cursor.close()
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(f"SELECT * FROM `work` WHERE user = '{session['username']}'")
+        blogs = cursor.fetchall()
+        cursor.close()
+        blogs = sort_blog_array(blogs)
+        return render_template('devhub/index.html',title='dev space',log=session,blogs=blogs)
     return redirect(url_for('login'))
+
+@app.route('/dev_view')
+def dev_view():
+    if 'logged_in' in session and session['logged_in']:
+        id = request.args.get('id')
+        db = get_db()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(f"SELECT * FROM `work` WHERE id = '{id}'")
+        blogs = cursor.fetchall()
+        cursor.close()
+        blogs = blogs[0]
+        return render_template('devhub/dev_view.html',title='dev space',log=session,blogs=blogs)
+    return redirect(url_for('login'))
+
 @app.route('/admin',methods=['GET','POST'])
 def admin():
     if 'logged_in' in session and session['premisions'] == 'admin':
