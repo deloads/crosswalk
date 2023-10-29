@@ -5,7 +5,7 @@
     <div class="btn-group" role="group" aria-label="Basic example">
         <a href="/add" class="btn btn-secondary" role="button" aria-disabled="true">add blog</a>
     {% for user in users %}
-        <input type="checkbox" class="btn-check" id="{{user['username']}}" autocomplete="on">
+        <input onclick="turn_on(this)" type="checkbox" class="btn-check" id="{{user['username']}}">
         <label class="btn btn-secondary" for="{{user['username']}}">{{user['username']}}</label>
     {% endfor %}
     </div>
@@ -13,11 +13,11 @@
     <div class="list-group">
     {% for item in work %}
         {% if item['status'] == 'done' %}
-        <a href="/view?id={{item['id']}}" class="list-group-item list-group-item-action list-group-item-success" aria-current="true">
+        <a href="/view?id={{item['id']}}" class="{{item['user']}} list-group-item list-group-item-action list-group-item-success" aria-current="true">
         {% elif item['status'] == 'started'%}
-        <a href="/view?id={{item['id']}}" class="list-group-item list-group-item-action list-group-item-primary" aria-current="true">
+        <a href="/view?id={{item['id']}}" class="{{item['user']}} list-group-item list-group-item-action list-group-item-primary" aria-current="true">
         {% else %}
-        <a href="/view?id={{item['id']}}" class="list-group-item list-group-item-action" aria-current="true">
+        <a href="/view?id={{item['id']}}" class="{{item['user']}} list-group-item list-group-item-action" aria-current="true">
         {% endif %}
         
           <div class="d-flex w-100 justify-content-between">

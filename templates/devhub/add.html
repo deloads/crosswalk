@@ -4,7 +4,7 @@
     <form action="/add" method="get">
         <div class="input-group mb-3">
             <label class="input-group-text" for="inputGroupSelect01">developer</label>
-            <select name="username" class="form-select" id="inputGroupSelect01">
+            <select required name="username" class="form-select" id="inputGroupSelect01">
             {% for user in users %}
             <option value="{{user['username']}}">{{user['username']}}</option>
             {% endfor %}
@@ -12,11 +12,11 @@
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">titel</span>
-            <input name="titel" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+            <input required name="titel" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
         </div>
         <div class="input-group">
             <span class="input-group-text">content</span>
-            <textarea name="content" class="form-control" aria-label="With textarea">blog text</textarea>
+            <textarea required name="content" class="form-control" aria-label="With textarea">blog text</textarea>
         </div>
         <br>
         <button type="submit" class="btn btn-success">add new blog</button>

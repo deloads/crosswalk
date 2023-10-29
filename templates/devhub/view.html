@@ -5,7 +5,7 @@
         <input hidden type="number" value="{{work['id']}}" name="id">
         <div class="input-group mb-3">
             <label class="input-group-text" for="inputGroupSelect01">developer</label>
-            <select name="username" class="form-select" id="inputGroupSelect01">
+            <select required name="username" class="form-select" id="inputGroupSelect01">
             {% for user in users %}
             {% if user['username'] == work['user'] %}
                 <option selected value="{{user['username']}}">{{user['username']}}</option>
@@ -17,7 +17,7 @@
         </div>
         <div class="input-group mb-3">
             <label class="input-group-text" for="inputGroupSelect01">status</label>
-            <select name="status" class="form-select" id="inputGroupSelect01">
+            <select required name="status" class="form-select" id="inputGroupSelect01">
                 {% if work['status'] == 'done' %}
                 <option value="not started">not started</option>
                 <option value="started">started</option>
@@ -36,11 +36,11 @@
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text" id="basic-addon1">titel</span>
-            <input name="titel" value="{{work['titel']}}" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+            <input required name="titel" value="{{work['titel']}}" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
         </div>
         <div class="input-group">
             <span class="input-group-text">content</span>
-            <textarea name="content" class="form-control" aria-label="With textarea">{{work['content']}}</textarea>
+            <textarea required name="content" class="form-control" aria-label="With textarea">{{work['content']}}</textarea>
         </div>
         <br>
         <div class="btn-group" role="group" aria-label="Basic example">

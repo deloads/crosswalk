@@ -10,6 +10,21 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'crosswalk'
 
+def sort_blog_array(blog):
+    new_blog = []
+
+    for b in blog:
+        if b['status'] == 'started':
+            new_blog.append(b)
+    for b in blog:
+        if b['status'] == 'not started':
+            new_blog.append(b)
+    for b in blog:
+        if b['status'] == 'done':
+            new_blog.append(b)
+
+    return new_blog
+
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -82,7 +97,7 @@ def admin():
         cursor.execute("SELECT * FROM `work`")
         work = cursor.fetchall()
         cursor.close()
-        
+        work = sort_blog_array(work)
         return render_template('devhub/admin.html',title='admin',log=session,users=users,work=work)
     return redirect(url_for('login'))
 
