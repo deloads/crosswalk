@@ -1,7 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, g
+from flask import Flask, render_template, request, redirect, url_for, g, session
 import mysql.connector
 
 app = Flask(__name__)
+
+app.secret_key = 'your_secret_key_here'
+
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
@@ -35,23 +38,47 @@ def init_db():
 
 @app.route('/')
 def index():
-    db = get_db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM `users` WHERE 1')
-    data = cursor.fetchall()
-    cursor.close()
-    return render_template('index.html', data=data)
+    return render_template('mainhub/index.html',title='home',log=session)
 
-@app.route('/add', methods=['POST'])
-def add_data():
+@app.route('/about')
+def about():
+    return render_template('mainhub/about.html',title='about',log=session)
+
+
+@app.route('/login',methods=['POST','GET'])
+def login():
     if request.method == 'POST':
-        data = request.form['data_to_add']
+        username = request.form['username']
+        password = request.form['password']
         db = get_db()
-        cursor = db.cursor()
-        cursor.execute('INSERT INTO your_table_name (column_name) VALUES (%s)', (data,))
-        db.commit()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(f"SELECT `password`, `premisions` FROM `users` WHERE username = '{username}'")
+        data = cursor.fetchall()
         cursor.close()
-        return redirect(url_for('index'))
+        if password == data[0]['password']:
+            session['logged_in'] = True
+            session['premisions'] = data[0]['premisions']
+            return redirect(url_for('dev'))
+    return render_template('mainhub/login.html',title='login',log=session)
+
+#devplace
+@app.route('/dev')
+def dev():
+    if 'logged_in' in session and session['logged_in']:
+        return render_template('devhub/index.html',title='home',log=session)
+    return redirect(url_for('login'))
+
+
+#@app.route('/add', methods=['POST'])
+#def add_data():
+#    if request.method == 'POST':
+#        data = request.form['data_to_add']
+#        db = get_db()
+#        cursor = db.cursor()
+#        cursor.execute('INSERT INTO your_table_name (column_name) VALUES (%s)', (data,))
+#        db.commit()
+#        cursor.close()
+#        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)
